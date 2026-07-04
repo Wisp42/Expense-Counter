@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface Props {
   onCancel: () => void;
@@ -14,36 +14,27 @@ interface Props {
 export function ModalButtonRow({ onCancel, onConfirm, confirmLabel = 'Сохранить', confirmEnabled }: Props) {
   const { theme: themeName } = useSettings();
   const theme = getTheme(themeName);
+  const confirmBg = confirmEnabled ? theme.green : theme.buttonBg;
 
   return (
     <View style={{ flexDirection: 'row', gap: 10 }}>
-      <Pressable
+      <AnimatedPressable
         onPress={onCancel}
-        style={(state) => [
-          { flex: 1, padding: 12, borderRadius: 14, backgroundColor: theme.buttonBg, alignItems: 'center' },
-          withPressFeedback(state.pressed),
-        ]}
+        bg={theme.buttonBg}
+        style={{ flex: 1, padding: 12, borderRadius: 14, alignItems: 'center' }}
       >
         <Text style={{ color: theme.accent, fontWeight: '700' }}>Отмена</Text>
-      </Pressable>
-      <Pressable
+      </AnimatedPressable>
+      <AnimatedPressable
         onPress={onConfirm}
         disabled={!confirmEnabled}
-        style={(state) => [
-          {
-            flex: 1,
-            padding: 12,
-            borderRadius: 14,
-            backgroundColor: confirmEnabled ? theme.green : theme.buttonBg,
-            alignItems: 'center',
-          },
-          withPressFeedback(state.pressed, !confirmEnabled),
-        ]}
+        bg={confirmBg}
+        style={{ flex: 1, padding: 12, borderRadius: 14, alignItems: 'center' }}
       >
         <Text style={{ color: confirmEnabled ? theme.background : theme.accent, fontWeight: '700' }}>
           {confirmLabel}
         </Text>
-      </Pressable>
+      </AnimatedPressable>
     </View>
   );
 }

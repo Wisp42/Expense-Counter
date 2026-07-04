@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { AnimatedTextInput } from '../components/AnimatedTextInput';
 import { CurrencyInputModal } from '../components/CurrencyInputModal';
 import { ManualBalanceModal } from '../components/ManualBalanceModal';
 import { Numpad } from '../components/Numpad';
@@ -70,26 +72,37 @@ export function CounterScreen() {
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <View style={styles.counterBlock}>
         <View style={styles.balanceRow}>
-          <Pressable onLongPress={() => setManualModalVisible(true)}>
+          <AnimatedPressable
+            onLongPress={() => setManualModalVisible(true)}
+            bg="transparent"
+            scaleOnPress
+            style={styles.balancePressable}
+          >
             <Text style={[styles.balance, { color: theme.text }]}>
               {formatBalance(balance, roundBalance)}
             </Text>
-          </Pressable>
+          </AnimatedPressable>
           <Text style={[styles.balance, { color: theme.text }]}> </Text>
-          <Pressable onLongPress={() => setCurrencyModalVisible(true)}>
+          <AnimatedPressable
+            onLongPress={() => setCurrencyModalVisible(true)}
+            bg="transparent"
+            scaleOnPress
+            style={styles.balancePressable}
+          >
             <Text style={[styles.balance, { color: theme.text }]}>{currencySymbol}</Text>
-          </Pressable>
+          </AnimatedPressable>
         </View>
         <Text style={[styles.inputPreview, { color: inputColor }]}>{inputDisplay}</Text>
       </View>
 
       <View style={styles.nameFieldWrap}>
-        <TextInput
+        <AnimatedTextInput
           value={txnName}
           onChangeText={setTxnName}
           placeholder="Название операции (необязательно)"
           placeholderTextColor={theme.accent}
-          style={[styles.nameField, { backgroundColor: theme.buttonBg, color: theme.text }]}
+          bg={theme.buttonBg}
+          style={[styles.nameField, { color: theme.text }]}
         />
       </View>
 
@@ -133,6 +146,9 @@ const styles = StyleSheet.create({
   balanceRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
+  },
+  balancePressable: {
+    flexDirection: 'row',
   },
   balance: {
     fontSize: 44,

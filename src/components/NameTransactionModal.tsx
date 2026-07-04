@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput } from 'react-native';
+import { Text } from 'react-native';
 import { setTransactionName } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 import type { HistoryRow } from '../utils/types';
+import { AnimatedTextInput } from './AnimatedTextInput';
 import { ModalButtonRow } from './ModalButtonRow';
 import { OverlayModal } from './OverlayModal';
 
@@ -36,14 +37,14 @@ export function NameTransactionModal({ visible, row, onClose }: Props) {
   return (
     <OverlayModal visible={visible} onClose={onClose} position="center">
       <Text style={{ fontSize: 15, fontWeight: '700', color: theme.text }}>Название операции</Text>
-      <TextInput
+      <AnimatedTextInput
         value={value}
         onChangeText={setValue}
         autoFocus
         placeholder="Например, Кофе"
         placeholderTextColor={theme.accent}
+        bg={theme.buttonBg}
         style={{
-          backgroundColor: theme.buttonBg,
           borderRadius: 14,
           padding: 12,
           fontSize: 15,

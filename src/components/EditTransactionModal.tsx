@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { updateTransaction } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 import type { HistoryRow } from '../utils/types';
+import { AnimatedTextInput } from './AnimatedTextInput';
 import { ModalButtonRow } from './ModalButtonRow';
 import { OverlayModal } from './OverlayModal';
 
@@ -46,12 +47,12 @@ export function EditTransactionModal({ visible, row, onClose }: Props) {
 
       <View style={{ gap: 6 }}>
         <Text style={{ fontSize: 12, fontWeight: '700', color: theme.accent }}>Сумма (со знаком)</Text>
-        <TextInput
+        <AnimatedTextInput
           value={amountText}
           onChangeText={setAmountText}
           keyboardType="default"
+          bg={theme.buttonBg}
           style={{
-            backgroundColor: theme.buttonBg,
             borderRadius: 14,
             padding: 12,
             fontSize: 16,
@@ -64,13 +65,13 @@ export function EditTransactionModal({ visible, row, onClose }: Props) {
       {row.type === 'deal' && (
         <View style={{ gap: 6 }}>
           <Text style={{ fontSize: 12, fontWeight: '700', color: theme.accent }}>Название</Text>
-          <TextInput
+          <AnimatedTextInput
             value={nameText}
             onChangeText={setNameText}
             placeholder="Название операции"
             placeholderTextColor={theme.accent}
+            bg={theme.buttonBg}
             style={{
-              backgroundColor: theme.buttonBg,
               borderRadius: 14,
               padding: 12,
               fontSize: 15,

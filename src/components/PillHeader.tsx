@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface Props {
   progress: Animated.AnimatedInterpolation<number>;
@@ -39,14 +39,12 @@ export function PillHeader({ progress, settingsOpen, onSelectCounter, onSelectHi
     inputRange: [0, 1],
     outputRange: [theme.accent, theme.text],
   }) as unknown as string;
+  const pressTint = theme.text + '14';
 
   return (
     <View style={styles.header}>
       <View style={[styles.pill, { backgroundColor: theme.buttonBg }]}>
-        <Pressable
-          onPress={onSelectCounter}
-          style={(state) => [styles.segment, withPressFeedback(state.pressed)]}
-        >
+        <AnimatedPressable onPress={onSelectCounter} style={styles.segment} bg="transparent" pressedColor={pressTint}>
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
@@ -54,11 +52,8 @@ export function PillHeader({ progress, settingsOpen, onSelectCounter, onSelectHi
             ]}
           />
           <Animated.Text style={[styles.segmentText, { color: counterTextColor }]}>Счётчик</Animated.Text>
-        </Pressable>
-        <Pressable
-          onPress={onSelectHistory}
-          style={(state) => [styles.segment, withPressFeedback(state.pressed)]}
-        >
+        </AnimatedPressable>
+        <AnimatedPressable onPress={onSelectHistory} style={styles.segment} bg="transparent" pressedColor={pressTint}>
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
@@ -66,16 +61,13 @@ export function PillHeader({ progress, settingsOpen, onSelectCounter, onSelectHi
             ]}
           />
           <Animated.Text style={[styles.segmentText, { color: historyTextColor }]}>История</Animated.Text>
-        </Pressable>
+        </AnimatedPressable>
       </View>
-      <Pressable
-        onPress={onOpenSettings}
-        style={(state) => [styles.gear, withPressFeedback(state.pressed)]}
-      >
+      <AnimatedPressable onPress={onOpenSettings} style={styles.gear} bg="transparent" pressedColor={theme.buttonBg}>
         <Animated.View style={{ transform: [{ rotate: gearRotateDeg }] }}>
           <Feather name="settings" size={20} color={theme.text} />
         </Animated.View>
-      </Pressable>
+      </AnimatedPressable>
     </View>
   );
 }

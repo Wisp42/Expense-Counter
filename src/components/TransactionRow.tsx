@@ -1,9 +1,9 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme, Theme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
 import type { HistoryRow } from '../utils/types';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface Props {
   row: HistoryRow;
@@ -22,9 +22,10 @@ export function TransactionRow({ row, onLongPress, onAddName }: Props) {
   const theme = getTheme(themeName);
 
   return (
-    <Pressable
+    <AnimatedPressable
       onLongPress={onLongPress}
-      style={(state) => [styles.row, { borderBottomColor: theme.text + '1a' }, withPressFeedback(state.pressed)]}
+      bg={theme.background}
+      style={[styles.row, { borderBottomColor: theme.text + '1a' }]}
     >
       {row.hasName ? (
         <View style={styles.left}>
@@ -36,18 +37,20 @@ export function TransactionRow({ row, onLongPress, onAddName }: Props) {
       ) : (
         <View style={[styles.left, { gap: 6 }]}>
           <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
-          <Pressable
+          <AnimatedPressable
             onPress={onAddName}
-            style={(state) => [styles.addNameBtn, { borderColor: theme.accent }, withPressFeedback(state.pressed)]}
+            bg={theme.background}
+            scaleOnPress
+            style={[styles.addNameBtn, { borderColor: theme.accent }]}
           >
             <Text style={{ color: theme.accent, fontSize: 15, fontWeight: '700', lineHeight: 15 }}>+</Text>
-          </Pressable>
+          </AnimatedPressable>
         </View>
       )}
       <Text style={[styles.amount, { color: amountColorFor(row, theme) }]}>
         {row.amountDisplay} {currencySymbol}
       </Text>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 

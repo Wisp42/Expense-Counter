@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { ActionSheetModal } from '../components/ActionSheetModal';
+import { AnimatedPressable } from '../components/AnimatedPressable';
 import { EditTransactionModal } from '../components/EditTransactionModal';
 import { FilterSortModal } from '../components/FilterSortModal';
 import { NameTransactionModal } from '../components/NameTransactionModal';
@@ -10,7 +11,6 @@ import { subscribeDbChange } from '../db/dbEvents';
 import { deleteTransaction, getGroupedHistory } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
 import type { HistoryFilter, HistoryGroup, HistoryRow } from '../utils/types';
 
 const DEFAULT_FILTER: HistoryFilter = { type: 'all', startDate: null, endDate: null };
@@ -40,15 +40,12 @@ export function HistoryScreen() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <View style={styles.filterBarWrap}>
-        <Pressable
-          onPress={() => setFilterVisible(true)}
-          style={(state) => [styles.filterBtn, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
-        >
+        <AnimatedPressable onPress={() => setFilterVisible(true)} bg={theme.buttonBg} style={styles.filterBtn}>
           <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
             <Path d="M3 4h18l-7 8v6l-4 2v-8L3 4z" stroke={theme.text} strokeWidth={1.6} strokeLinejoin="round" />
           </Svg>
           <Text style={{ fontSize: 13, fontWeight: '700', color: theme.text }}>Фильтр и сортировка</Text>
-        </Pressable>
+        </AnimatedPressable>
       </View>
 
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>

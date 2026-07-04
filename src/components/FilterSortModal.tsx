@@ -1,11 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 import { ymdLocal } from '../utils/format';
-import { withPressFeedback } from '../utils/pressedFeedback';
 import type { FilterType, HistoryFilter } from '../utils/types';
+import { AnimatedPressable } from './AnimatedPressable';
 import { OverlayModal } from './OverlayModal';
 
 const TYPE_OPTIONS: { key: FilterType; label: string }[] = [
@@ -37,25 +37,19 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
   };
 
   const DateRow = ({ label, which, value }: { label: string; which: 'start' | 'end'; value: string | null }) => (
-    <Pressable
-      onPress={() => setPickerFor(which)}
-      style={(state) => [styles.dateRow, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
-    >
+    <AnimatedPressable onPress={() => setPickerFor(which)} bg={theme.buttonBg} style={styles.dateRow}>
       <Text style={{ fontSize: 14, fontWeight: '600', color: theme.accent }}>{label}</Text>
       <Text style={{ fontSize: 14, fontWeight: '700', color: theme.text }}>{value ?? '—'}</Text>
-    </Pressable>
+    </AnimatedPressable>
   );
 
   return (
     <OverlayModal visible={visible} onClose={onClose} position="bottom">
       <View style={styles.headerRow}>
         <Text style={[styles.title, { color: theme.text }]}>Фильтр и сортировка</Text>
-        <Pressable
-          onPress={onClose}
-          style={(state) => [styles.closeBtn, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
-        >
+        <AnimatedPressable onPress={onClose} bg={theme.buttonBg} style={styles.closeBtn}>
           <Text style={{ color: theme.accent, fontWeight: '700' }}>×</Text>
-        </Pressable>
+        </AnimatedPressable>
       </View>
 
       <View>
@@ -63,16 +57,17 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
         {TYPE_OPTIONS.map((opt) => {
           const active = filter.type === opt.key;
           return (
-            <Pressable
+            <AnimatedPressable
               key={opt.key}
               onPress={() => setType(opt.key)}
-              style={(state) => [styles.typeRow, withPressFeedback(state.pressed)]}
+              bg={theme.background}
+              style={styles.typeRow}
             >
               <Text style={{ fontSize: 15, fontWeight: '600', color: theme.text }}>{opt.label}</Text>
               <View style={[styles.radioOuter, { borderColor: active ? theme.green : theme.accent }]}>
                 {active && <View style={[styles.radioInner, { backgroundColor: theme.green }]} />}
               </View>
-            </Pressable>
+            </AnimatedPressable>
           );
         })}
       </View>
@@ -85,12 +80,9 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
         </View>
       </View>
 
-      <Pressable
-        onPress={onClose}
-        style={(state) => [styles.applyBtn, { backgroundColor: theme.green }, withPressFeedback(state.pressed)]}
-      >
+      <AnimatedPressable onPress={onClose} bg={theme.green} style={styles.applyBtn}>
         <Text style={{ color: theme.background, fontWeight: '800', fontSize: 15 }}>Применить</Text>
-      </Pressable>
+      </AnimatedPressable>
 
       {pickerFor && (
         <DateTimePicker
@@ -139,6 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 13,
     paddingHorizontal: 4,
+    borderRadius: 10,
   },
   radioOuter: {
     width: 20,

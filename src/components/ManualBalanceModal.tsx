@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput } from 'react-native';
+import { Text } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { AnimatedTextInput } from './AnimatedTextInput';
 import { ModalButtonRow } from './ModalButtonRow';
 import { OverlayModal } from './OverlayModal';
 
@@ -38,15 +39,15 @@ export function ManualBalanceModal({ visible, currentBalance, onClose, onConfirm
       <Text style={{ fontSize: 15, fontWeight: '700', color: theme.text }}>
         Новый остаток ({currencySymbol})
       </Text>
-      <TextInput
+      <AnimatedTextInput
         value={value}
         onChangeText={setValue}
         keyboardType="decimal-pad"
         autoFocus
         placeholder="0"
         placeholderTextColor={theme.accent}
+        bg={theme.buttonBg}
         style={{
-          backgroundColor: theme.buttonBg,
           borderRadius: 14,
           padding: 12,
           fontSize: 18,

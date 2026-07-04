@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Text } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
+import { AnimatedPressable } from './AnimatedPressable';
 import { OverlayModal } from './OverlayModal';
 
 interface Props {
@@ -19,25 +19,21 @@ export function ActionSheetModal({ visible, isProtectedStart, onClose, onEdit, o
 
   return (
     <OverlayModal visible={visible} onClose={onClose} position="bottom">
-      <Pressable
+      <AnimatedPressable
         onPress={onEdit}
-        style={(state) => [
-          { padding: 16, borderRadius: 14, backgroundColor: theme.buttonBg, alignItems: 'center' },
-          withPressFeedback(state.pressed),
-        ]}
+        bg={theme.buttonBg}
+        style={{ padding: 16, borderRadius: 14, alignItems: 'center' }}
       >
         <Text style={{ color: theme.text, fontWeight: '700', fontSize: 15 }}>Изменить</Text>
-      </Pressable>
+      </AnimatedPressable>
       {!isProtectedStart && (
-        <Pressable
+        <AnimatedPressable
           onPress={onDelete}
-          style={(state) => [
-            { padding: 16, borderRadius: 14, backgroundColor: theme.buttonBg, alignItems: 'center' },
-            withPressFeedback(state.pressed),
-          ]}
+          bg={theme.buttonBg}
+          style={{ padding: 16, borderRadius: 14, alignItems: 'center' }}
         >
           <Text style={{ color: theme.red, fontWeight: '700', fontSize: 15 }}>Удалить</Text>
-        </Pressable>
+        </AnimatedPressable>
       )}
     </OverlayModal>
   );

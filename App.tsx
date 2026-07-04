@@ -64,7 +64,7 @@ function Root() {
         animationType="slide"
         onRequestClose={() => setSettingsVisible(false)}
       >
-        <SettingsScreen onClose={() => setSettingsVisible(false)} />
+        <SettingsScreen visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
       </Modal>
     </SafeAreaView>
   );

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { AnimatedPressable } from './AnimatedPressable';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { withPressFeedback } from '../utils/pressedFeedback';
 
 interface Props {
   onDigit: (d: string) => void;
@@ -160,12 +160,9 @@ function Key({
   bg: string;
 }) {
   return (
-    <Pressable
-      onPress={onPress}
-      style={(state) => [style, styles.key, { backgroundColor: bg }, withPressFeedback(state.pressed)]}
-    >
+    <AnimatedPressable onPress={onPress} style={[style, styles.key]} bg={bg}>
       {children}
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
