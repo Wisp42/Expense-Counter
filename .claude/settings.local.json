@@ -19,7 +19,9 @@
       "Bash(lsof -iTCP:8081 -sTCP:LISTEN -n -P)",
       "Bash(curl -s http://localhost:8081/status)",
       "Bash(curl -s http://localhost:8081 -o /dev/null -w \"%{http_code}\\\\n\")",
-      "Bash(ipconfig getifaddr *)"
+      "Bash(ipconfig getifaddr *)",
+      "Bash(npx --yes expo install @expo/vector-icons)",
+      "Bash(node -e \"console.log\\(require\\('@react-native-community/datetimepicker/package.json'\\).version\\)\")"
     ]
   }
 }

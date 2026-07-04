@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme, Theme } from '../theme/theme';
+import { withPressFeedback } from '../utils/pressedFeedback';
 import type { HistoryRow } from '../utils/types';
 
 interface Props {
@@ -21,7 +22,10 @@ export function TransactionRow({ row, onLongPress, onAddName }: Props) {
   const theme = getTheme(themeName);
 
   return (
-    <Pressable onLongPress={onLongPress} style={[styles.row, { borderBottomColor: theme.text + '1a' }]}>
+    <Pressable
+      onLongPress={onLongPress}
+      style={(state) => [styles.row, { borderBottomColor: theme.text + '1a' }, withPressFeedback(state.pressed)]}
+    >
       {row.hasName ? (
         <View style={styles.left}>
           <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
@@ -34,7 +38,7 @@ export function TransactionRow({ row, onLongPress, onAddName }: Props) {
           <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
           <Pressable
             onPress={onAddName}
-            style={[styles.addNameBtn, { borderColor: theme.accent }]}
+            style={(state) => [styles.addNameBtn, { borderColor: theme.accent }, withPressFeedback(state.pressed)]}
           >
             <Text style={{ color: theme.accent, fontSize: 15, fontWeight: '700', lineHeight: 15 }}>+</Text>
           </Pressable>

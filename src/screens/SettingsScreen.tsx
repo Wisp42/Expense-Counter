@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CurrencyInputModal } from '../components/CurrencyInputModal';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { withPressFeedback } from '../utils/pressedFeedback';
 
 interface Props {
   onClose: () => void;
@@ -16,10 +18,13 @@ export function SettingsScreen({ onClose }: Props) {
   const isDark = themeName === 'dark';
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text }]}>Настройки</Text>
-        <Pressable onPress={onClose} style={[styles.closeBtn, { backgroundColor: theme.buttonBg }]}>
+        <Pressable
+          onPress={onClose}
+          style={(state) => [styles.closeBtn, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
+        >
           <Text style={{ color: theme.accent, fontWeight: '700', fontSize: 16 }}>×</Text>
         </Pressable>
       </View>
@@ -40,7 +45,12 @@ export function SettingsScreen({ onClose }: Props) {
 
         <Pressable
           onPress={() => setCurrencyModalVisible(true)}
-          style={[styles.card, styles.rowCard, { backgroundColor: theme.buttonBg }]}
+          style={(state) => [
+            styles.card,
+            styles.rowCard,
+            { backgroundColor: theme.buttonBg },
+            withPressFeedback(state.pressed),
+          ]}
         >
           <View>
             <Text style={[styles.cardLabel, { color: theme.accent }]}>Символ валюты</Text>
@@ -74,7 +84,7 @@ export function SettingsScreen({ onClose }: Props) {
       </ScrollView>
 
       <CurrencyInputModal visible={currencyModalVisible} onClose={() => setCurrencyModalVisible(false)} />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -92,9 +102,10 @@ function ThemeChip({
   return (
     <Pressable
       onPress={onPress}
-      style={[
+      style={(state) => [
         styles.chip,
         { backgroundColor: active ? theme.accent : 'transparent', borderColor: theme.accent },
+        withPressFeedback(state.pressed),
       ]}
     >
       <Text style={{ color: active ? theme.text : theme.accent, fontWeight: '700', fontSize: 14 }}>
@@ -113,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   title: {

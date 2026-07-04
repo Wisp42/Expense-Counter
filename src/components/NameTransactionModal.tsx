@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import { setTransactionName } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 import type { HistoryRow } from '../utils/types';
+import { ModalButtonRow } from './ModalButtonRow';
 import { OverlayModal } from './OverlayModal';
 
 interface Props {
@@ -49,27 +50,7 @@ export function NameTransactionModal({ visible, row, onClose }: Props) {
           color: theme.text,
         }}
       />
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Pressable
-          onPress={onClose}
-          style={{ flex: 1, padding: 12, borderRadius: 14, backgroundColor: theme.buttonBg, alignItems: 'center' }}
-        >
-          <Text style={{ color: theme.accent, fontWeight: '700' }}>Отмена</Text>
-        </Pressable>
-        <Pressable
-          onPress={save}
-          disabled={!valid}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderRadius: 14,
-            backgroundColor: valid ? theme.green : theme.buttonBg,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: valid ? theme.background : theme.accent, fontWeight: '700' }}>Сохранить</Text>
-        </Pressable>
-      </View>
+      <ModalButtonRow onCancel={onClose} onConfirm={save} confirmEnabled={valid} />
     </OverlayModal>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { ModalButtonRow } from './ModalButtonRow';
 import { OverlayModal } from './OverlayModal';
 
 const IS_NUMERIC = /^-?\d+([.,]\d+)?$/;
@@ -51,27 +52,7 @@ export function CurrencyInputModal({ visible, onClose }: Props) {
       {!valid && trimmed !== '' && (
         <Text style={{ fontSize: 12, color: theme.red }}>Валюта — это текст, а не число</Text>
       )}
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Pressable
-          onPress={onClose}
-          style={{ flex: 1, padding: 12, borderRadius: 14, backgroundColor: theme.buttonBg, alignItems: 'center' }}
-        >
-          <Text style={{ color: theme.accent, fontWeight: '700' }}>Отмена</Text>
-        </Pressable>
-        <Pressable
-          onPress={confirm}
-          disabled={!valid}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderRadius: 14,
-            backgroundColor: valid ? theme.green : theme.buttonBg,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: valid ? theme.background : theme.accent, fontWeight: '700' }}>Сохранить</Text>
-        </Pressable>
-      </View>
+      <ModalButtonRow onCancel={onClose} onConfirm={confirm} confirmEnabled={valid} />
     </OverlayModal>
   );
 }

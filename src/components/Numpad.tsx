@@ -3,6 +3,7 @@ import { Animated, Easing, LayoutChangeEvent, Pressable, StyleSheet, Text, View 
 import Svg, { Path } from 'react-native-svg';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { withPressFeedback } from '../utils/pressedFeedback';
 
 interface Props {
   onDigit: (d: string) => void;
@@ -81,7 +82,9 @@ export function Numpad({ onDigit, onDot, onBackspace, onToggleMode, onCommit, mo
       <Key style={rect(size, { col: 3, row: 0 })} bg={theme.buttonBg} onPress={onToggleMode}>
         <Animated.View style={{ transform: [{ rotate }] }}>
           <Svg width={22} height={22} viewBox="0 0 24 24">
-            <Path d="M12 5l8 12H4z" fill={modeColor} />
+            {/* Base-up / apex-down at rest (mode=subtract, red); 180° rotation flips it to
+                base-down / apex-up for mode=add (green), matching the two-triangle spec. */}
+            <Path d="M4 5h16L12 17z" fill={modeColor} />
           </Svg>
         </Animated.View>
       </Key>
@@ -157,7 +160,10 @@ function Key({
   bg: string;
 }) {
   return (
-    <Pressable onPress={onPress} style={[style, styles.key, { backgroundColor: bg }]}>
+    <Pressable
+      onPress={onPress}
+      style={(state) => [style, styles.key, { backgroundColor: bg }, withPressFeedback(state.pressed)]}
+    >
       {children}
     </Pressable>
   );

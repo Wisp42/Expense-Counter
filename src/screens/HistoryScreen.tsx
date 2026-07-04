@@ -10,6 +10,7 @@ import { subscribeDbChange } from '../db/dbEvents';
 import { deleteTransaction, getGroupedHistory } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { withPressFeedback } from '../utils/pressedFeedback';
 import type { HistoryFilter, HistoryGroup, HistoryRow } from '../utils/types';
 
 const DEFAULT_FILTER: HistoryFilter = { type: 'all', startDate: null, endDate: null };
@@ -41,7 +42,7 @@ export function HistoryScreen() {
       <View style={styles.filterBarWrap}>
         <Pressable
           onPress={() => setFilterVisible(true)}
-          style={[styles.filterBtn, { backgroundColor: theme.buttonBg }]}
+          style={(state) => [styles.filterBtn, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
         >
           <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
             <Path d="M3 4h18l-7 8v6l-4 2v-8L3 4z" stroke={theme.text} strokeWidth={1.6} strokeLinejoin="round" />

@@ -1,51 +1,80 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Feather } from '@expo/vector-icons';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
+import { withPressFeedback } from '../utils/pressedFeedback';
 
 interface Props {
-  activeScreen: 'counter' | 'history';
+  progress: Animated.AnimatedInterpolation<number>;
+  settingsOpen: boolean;
   onSelectCounter: () => void;
   onSelectHistory: () => void;
   onOpenSettings: () => void;
 }
 
-export function PillHeader({ activeScreen, onSelectCounter, onSelectHistory, onOpenSettings }: Props) {
+export function PillHeader({ progress, settingsOpen, onSelectCounter, onSelectHistory, onOpenSettings }: Props) {
   const { theme: themeName } = useSettings();
   const theme = getTheme(themeName);
-  const isCounter = activeScreen === 'counter';
+  const gearRotate = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(gearRotate, {
+      toValue: settingsOpen ? 1 : 0,
+      duration: 350,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [settingsOpen, gearRotate]);
+
+  const gearRotateDeg = gearRotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '90deg'] });
+
+  const counterBgOpacity = progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0], extrapolate: 'clamp' });
+  const historyBgOpacity = progress.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolate: 'clamp' });
+  const counterTextColor = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.text, theme.accent],
+  }) as unknown as string;
+  const historyTextColor = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.accent, theme.text],
+  }) as unknown as string;
 
   return (
     <View style={styles.header}>
       <View style={[styles.pill, { backgroundColor: theme.buttonBg }]}>
         <Pressable
           onPress={onSelectCounter}
-          style={[styles.segment, { backgroundColor: isCounter ? theme.accent : 'transparent' }]}
+          style={(state) => [styles.segment, withPressFeedback(state.pressed)]}
         >
-          <Text style={[styles.segmentText, { color: isCounter ? theme.text : theme.accent }]}>
-            Счётчик
-          </Text>
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: theme.accent, borderRadius: 999, opacity: counterBgOpacity },
+            ]}
+          />
+          <Animated.Text style={[styles.segmentText, { color: counterTextColor }]}>Счётчик</Animated.Text>
         </Pressable>
         <Pressable
           onPress={onSelectHistory}
-          style={[styles.segment, { backgroundColor: !isCounter ? theme.accent : 'transparent' }]}
+          style={(state) => [styles.segment, withPressFeedback(state.pressed)]}
         >
-          <Text style={[styles.segmentText, { color: !isCounter ? theme.text : theme.accent }]}>
-            История
-          </Text>
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: theme.accent, borderRadius: 999, opacity: historyBgOpacity },
+            ]}
+          />
+          <Animated.Text style={[styles.segmentText, { color: historyTextColor }]}>История</Animated.Text>
         </Pressable>
       </View>
-      <Pressable onPress={onOpenSettings} style={styles.gear}>
-        <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-          <Circle cx={12} cy={12} r={3} stroke={theme.text} strokeWidth={1.8} />
-          <Path
-            d="M19.4 13a7.9 7.9 0 000-2l2-1.5-2-3.4-2.4.6a8 8 0 00-1.7-1L15 3h-4l-.3 2.7a8 8 0 00-1.7 1l-2.4-.6-2 3.4L6.6 11a7.9 7.9 0 000 2l-2 1.5 2 3.4 2.4-.6a8 8 0 001.7 1L11 21h4l.3-2.7a8 8 0 001.7-1l2.4.6 2-3.4-2-1.5z"
-            stroke={theme.text}
-            strokeWidth={1.5}
-            strokeLinejoin="round"
-          />
-        </Svg>
+      <Pressable
+        onPress={onOpenSettings}
+        style={(state) => [styles.gear, withPressFeedback(state.pressed)]}
+      >
+        <Animated.View style={{ transform: [{ rotate: gearRotateDeg }] }}>
+          <Feather name="settings" size={20} color={theme.text} />
+        </Animated.View>
       </Pressable>
     </View>
   );

@@ -4,6 +4,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 import { ymdLocal } from '../utils/format';
+import { withPressFeedback } from '../utils/pressedFeedback';
 import type { FilterType, HistoryFilter } from '../utils/types';
 import { OverlayModal } from './OverlayModal';
 
@@ -38,7 +39,7 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
   const DateRow = ({ label, which, value }: { label: string; which: 'start' | 'end'; value: string | null }) => (
     <Pressable
       onPress={() => setPickerFor(which)}
-      style={[styles.dateRow, { backgroundColor: theme.buttonBg }]}
+      style={(state) => [styles.dateRow, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
     >
       <Text style={{ fontSize: 14, fontWeight: '600', color: theme.accent }}>{label}</Text>
       <Text style={{ fontSize: 14, fontWeight: '700', color: theme.text }}>{value ?? '—'}</Text>
@@ -49,7 +50,10 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
     <OverlayModal visible={visible} onClose={onClose} position="bottom">
       <View style={styles.headerRow}>
         <Text style={[styles.title, { color: theme.text }]}>Фильтр и сортировка</Text>
-        <Pressable onPress={onClose} style={[styles.closeBtn, { backgroundColor: theme.buttonBg }]}>
+        <Pressable
+          onPress={onClose}
+          style={(state) => [styles.closeBtn, { backgroundColor: theme.buttonBg }, withPressFeedback(state.pressed)]}
+        >
           <Text style={{ color: theme.accent, fontWeight: '700' }}>×</Text>
         </Pressable>
       </View>
@@ -59,7 +63,11 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
         {TYPE_OPTIONS.map((opt) => {
           const active = filter.type === opt.key;
           return (
-            <Pressable key={opt.key} onPress={() => setType(opt.key)} style={styles.typeRow}>
+            <Pressable
+              key={opt.key}
+              onPress={() => setType(opt.key)}
+              style={(state) => [styles.typeRow, withPressFeedback(state.pressed)]}
+            >
               <Text style={{ fontSize: 15, fontWeight: '600', color: theme.text }}>{opt.label}</Text>
               <View style={[styles.radioOuter, { borderColor: active ? theme.green : theme.accent }]}>
                 {active && <View style={[styles.radioInner, { backgroundColor: theme.green }]} />}
@@ -77,7 +85,10 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
         </View>
       </View>
 
-      <Pressable onPress={onClose} style={[styles.applyBtn, { backgroundColor: theme.green }]}>
+      <Pressable
+        onPress={onClose}
+        style={(state) => [styles.applyBtn, { backgroundColor: theme.green }, withPressFeedback(state.pressed)]}
+      >
         <Text style={{ color: theme.background, fontWeight: '800', fontSize: 15 }}>Применить</Text>
       </Pressable>
 
@@ -90,7 +101,8 @@ export function FilterSortModal({ visible, filter, onChangeFilter, onClose }: Pr
           }
           mode="date"
           display={Platform.OS === 'ios' ? 'inline' : 'default'}
-          onChange={(_e, date) => onPickDate(pickerFor, date)}
+          onValueChange={(_e, date) => onPickDate(pickerFor, date)}
+          onDismiss={() => setPickerFor(null)}
         />
       )}
     </OverlayModal>

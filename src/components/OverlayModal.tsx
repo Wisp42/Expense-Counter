@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
 
@@ -14,6 +15,7 @@ interface Props {
 export function OverlayModal({ visible, onClose, position = 'center', children }: Props) {
   const { theme: themeName } = useSettings();
   const theme = getTheme(themeName);
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -25,16 +27,29 @@ export function OverlayModal({ visible, onClose, position = 'center', children }
         ]}
         onPress={onClose}
       >
-        {/* Absorbs the touch so tapping the card doesn't bubble to the dismiss handler above. */}
-        <Pressable onPress={() => {}} style={position === 'bottom' ? styles.fullWidth : undefined}>
+        {/* Absorbs the touch so tapping the card doesn't bubble to the dismiss handler above.
+            Needs an explicit width — without it, this wrapper shrink-wraps to content size,
+            which starves the card's width:'100%' below (percentage-of-undefined collapses). */}
+        <Pressable onPress={() => {}} style={styles.fullWidth}>
           <View
             style={[
               styles.card,
               { backgroundColor: theme.background },
-              position === 'bottom' ? styles.cardBottom : styles.cardCenter,
+              position === 'bottom'
+                ? [styles.cardBottom, { paddingBottom: 20 + insets.bottom }]
+                : styles.cardCenter,
             ]}
           >
-            {children}
+            {position === 'bottom' ? (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.bottomContent}
+              >
+                {children}
+              </ScrollView>
+            ) : (
+              children
+            )}
           </View>
         </Pressable>
       </Pressable>
@@ -60,6 +75,9 @@ const styles = StyleSheet.create({
   card: {
     gap: 14,
   },
+  bottomContent: {
+    gap: 14,
+  },
   cardCenter: {
     width: '100%',
     borderRadius: 20,
@@ -69,7 +87,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
-    paddingBottom: 28,
     maxHeight: '80%',
   },
 });
