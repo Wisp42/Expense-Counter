@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    paddingHorizontal: 20,
   },
   listContent: {
     paddingBottom: 24,
@@ -134,10 +133,12 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 6,
+    paddingHorizontal: 20,
   },
   empty: {
     textAlign: 'center',
     paddingVertical: 40,
+    paddingHorizontal: 20,
     fontSize: 14,
     fontWeight: '600',
   },

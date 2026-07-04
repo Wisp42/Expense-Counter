@@ -76,6 +76,13 @@ export function AnimatedPressable({
 }: Props) {
   const anim = useRef(new Animated.Value(0)).current;
   const { outer, inner } = splitStyle(style);
+  // flex:1 only makes sense on the inner view when the outer Pressable has a *definite*
+  // height of its own (explicit height, or absolute positioning with both edges pinned) —
+  // otherwise Pressable's own height is derived FROM its child, and a flex:1 child in that
+  // circular situation collapses to zero size (this is what made button/tab text vanish).
+  // With no definite outer height, the inner view should just size to its own content,
+  // exactly like the Pressable would have without this wrapper.
+  const hasDefiniteHeight = 'height' in outer || ('top' in outer && 'bottom' in outer);
 
   const handlePressIn = (e: GestureResponderEvent) => {
     if (!disabled) {
@@ -95,7 +102,12 @@ export function AnimatedPressable({
   return (
     <Pressable disabled={disabled} onPressIn={handlePressIn} onPressOut={handlePressOut} style={outer} {...rest}>
       <Animated.View
-        style={[inner, { flex: 1, backgroundColor }, scaleOnPress ? { transform: [{ scale }] } : null]}
+        style={[
+          inner,
+          { alignSelf: 'stretch', backgroundColor },
+          hasDefiniteHeight ? { flex: 1 } : null,
+          scaleOnPress ? { transform: [{ scale }] } : null,
+        ]}
       >
         {children}
       </Animated.View>

@@ -60,7 +60,7 @@ function OverlayModalContent({
             styles.card,
             { backgroundColor: theme.background },
             position === 'bottom'
-              ? [styles.cardBottom, { paddingBottom: 20 + insets.bottom }]
+              ? [styles.cardBottom, { paddingBottom: 24 + Math.max(insets.bottom, 16) }]
               : [styles.cardCenter, { paddingBottom: 22 + insets.bottom }],
           ]}
         >
@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
-    maxHeight: '80%',
+    maxHeight: '94%',
   },
 });

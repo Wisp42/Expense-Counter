@@ -22,35 +22,39 @@ export function TransactionRow({ row, onLongPress, onAddName }: Props) {
   const theme = getTheme(themeName);
 
   return (
-    <AnimatedPressable
-      onLongPress={onLongPress}
-      bg={theme.background}
-      style={[styles.row, { borderBottomColor: theme.text + '1a' }]}
-    >
-      {row.hasName ? (
-        <View style={styles.left}>
-          <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
-            {row.displayName}
-          </Text>
-          <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
-        </View>
-      ) : (
-        <View style={[styles.left, { gap: 6 }]}>
-          <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
-          <AnimatedPressable
-            onPress={onAddName}
-            bg={theme.background}
-            scaleOnPress
-            style={[styles.addNameBtn, { borderColor: theme.accent }]}
-          >
-            <Text style={{ color: theme.accent, fontSize: 15, fontWeight: '700', lineHeight: 15 }}>+</Text>
-          </AnimatedPressable>
-        </View>
-      )}
-      <Text style={[styles.amount, { color: amountColorFor(row, theme) }]}>
-        {row.amountDisplay} {currencySymbol}
-      </Text>
-    </AnimatedPressable>
+    <View>
+      {/* Full-bleed press highlight: this row has no horizontal padding of its own container
+          (HistoryScreen's list is edge-to-edge) so the color feedback spans the full screen
+          width; the row's *content* gets its inset via paddingHorizontal on styles.row below.
+          The separator is a separate inset element (not a border) so it can stop short of the
+          edges independently of the full-bleed background. */}
+      <AnimatedPressable onLongPress={onLongPress} bg={theme.background} style={styles.row}>
+        {row.hasName ? (
+          <View style={styles.left}>
+            <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
+              {row.displayName}
+            </Text>
+            <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
+          </View>
+        ) : (
+          <View style={[styles.left, { gap: 6 }]}>
+            <Text style={[styles.dateTime, { color: theme.accent }]}>{row.dateTime}</Text>
+            <AnimatedPressable
+              onPress={onAddName}
+              bg={theme.background}
+              scaleOnPress
+              style={[styles.addNameBtn, { borderColor: theme.accent }]}
+            >
+              <Text style={{ color: theme.accent, fontSize: 15, fontWeight: '700', lineHeight: 15 }}>+</Text>
+            </AnimatedPressable>
+          </View>
+        )}
+        <Text style={[styles.amount, { color: amountColorFor(row, theme) }]}>
+          {row.amountDisplay} {currencySymbol}
+        </Text>
+      </AnimatedPressable>
+      <View style={[styles.separator, { backgroundColor: theme.text + '1a' }]} />
+    </View>
   );
 }
 
@@ -60,8 +64,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingVertical: 14,
-    borderBottomWidth: 1,
+    paddingHorizontal: 20,
     gap: 12,
+  },
+  separator: {
+    height: 1,
+    marginHorizontal: 20,
   },
   left: {
     minWidth: 0,
