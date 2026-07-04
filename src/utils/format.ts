@@ -1,3 +1,7 @@
+/** Largest absolute balance the counter's single-line display is designed for; beyond this
+ * the number is replaced by a joke overflow modal instead of an unreadably shrunk string. */
+export const MAX_DISPLAY_BALANCE = 9_999_999_999_999;
+
 function pad(n: number): string {
   return n < 10 ? '0' + n : '' + n;
 }

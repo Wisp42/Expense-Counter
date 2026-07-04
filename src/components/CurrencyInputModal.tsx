@@ -38,6 +38,7 @@ export function CurrencyInputModal({ visible, onClose }: Props) {
       <AnimatedTextInput
         value={value}
         onChangeText={setValue}
+        maxLength={4}
         autoFocus
         placeholder="$"
         placeholderTextColor={theme.accent}

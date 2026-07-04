@@ -83,8 +83,11 @@ export function Numpad({ onDigit, onDot, onBackspace, onToggleMode, onCommit, mo
         <Animated.View style={{ transform: [{ rotate }] }}>
           <Svg width={22} height={22} viewBox="0 0 24 24">
             {/* Base-up / apex-down at rest (mode=subtract, red); 180° rotation flips it to
-                base-down / apex-up for mode=add (green), matching the two-triangle spec. */}
-            <Path d="M4 5h16L12 17z" fill={modeColor} />
+                base-down / apex-up for mode=add (green), matching the two-triangle spec.
+                Vertices are placed equidistant (r=10) from the view's rotation pivot (12,12)
+                so the spin reads as rotating around the triangle's own center, not its apex —
+                an off-center pivot made it look like it spun around the bottom vertex. */}
+            <Path d="M4 6h16L12 22z" fill={modeColor} />
           </Svg>
         </Animated.View>
       </Key>

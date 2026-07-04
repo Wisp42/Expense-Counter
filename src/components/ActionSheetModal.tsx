@@ -22,7 +22,7 @@ export function ActionSheetModal({ visible, isProtectedStart, onClose, onEdit, o
       <AnimatedPressable
         onPress={onEdit}
         bg={theme.buttonBg}
-        style={{ padding: 16, borderRadius: 14, alignItems: 'center' }}
+        style={{ padding: 22, borderRadius: 14, alignItems: 'center' }}
       >
         <Text style={{ color: theme.text, fontWeight: '700', fontSize: 15 }}>Изменить</Text>
       </AnimatedPressable>
@@ -30,7 +30,7 @@ export function ActionSheetModal({ visible, isProtectedStart, onClose, onEdit, o
         <AnimatedPressable
           onPress={onDelete}
           bg={theme.buttonBg}
-          style={{ padding: 16, borderRadius: 14, alignItems: 'center' }}
+          style={{ padding: 22, borderRadius: 14, alignItems: 'center' }}
         >
           <Text style={{ color: theme.red, fontWeight: '700', fontSize: 15 }}>Удалить</Text>
         </AnimatedPressable>

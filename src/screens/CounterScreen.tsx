@@ -1,17 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import { AnimatedPressable } from '../components/AnimatedPressable';
 import { AnimatedTextInput } from '../components/AnimatedTextInput';
 import { CurrencyInputModal } from '../components/CurrencyInputModal';
 import { ManualBalanceModal } from '../components/ManualBalanceModal';
+import { MessageModal } from '../components/MessageModal';
 import { Numpad } from '../components/Numpad';
 import { subscribeDbChange } from '../db/dbEvents';
 import { getBalance, insertDeal, insertManualTotal } from '../db/transactions';
 import { useSettings } from '../settings/SettingsContext';
 import { getTheme } from '../theme/theme';
-import { formatBalance } from '../utils/format';
+import { formatBalance, MAX_DISPLAY_BALANCE } from '../utils/format';
 
 const MAX_INTEGER_DIGITS = 12;
+const BASE_BALANCE_FONT_SIZE = 44;
+const BLOCK_HORIZONTAL_PADDING = 20;
 
 export function CounterScreen() {
   const { theme: themeName, currencySymbol, roundBalance } = useSettings();
@@ -23,6 +26,11 @@ export function CounterScreen() {
   const [txnName, setTxnName] = useState('');
   const [manualModalVisible, setManualModalVisible] = useState(false);
   const [currencyModalVisible, setCurrencyModalVisible] = useState(false);
+  const [overflowMessage, setOverflowMessage] = useState<string | null>(null);
+  const warnedForBalanceRef = useRef<number | null>(null);
+
+  const [blockWidth, setBlockWidth] = useState(0);
+  const [naturalTextWidth, setNaturalTextWidth] = useState(0);
 
   const refreshBalance = useCallback(() => {
     getBalance().then(setBalance);
@@ -32,6 +40,21 @@ export function CounterScreen() {
     refreshBalance();
     return subscribeDbChange(refreshBalance);
   }, [refreshBalance]);
+
+  const isOverflow = Math.abs(balance) > MAX_DISPLAY_BALANCE;
+
+  useEffect(() => {
+    if (isOverflow && warnedForBalanceRef.current !== balance) {
+      warnedForBalanceRef.current = balance;
+      setOverflowMessage(
+        balance > 0 ? 'Даже у Илона Маска нету столько' : 'Это больше внешнего долга США'
+      );
+    }
+  }, [isOverflow, balance]);
+
+  const handleBlockLayout = (e: LayoutChangeEvent) => {
+    setBlockWidth(e.nativeEvent.layout.width);
+  };
 
   const appendDigit = (d: string) => {
     setInput((prev) => {
@@ -68,9 +91,26 @@ export function CounterScreen() {
   const inputColor = input === '' ? theme.accent : mode === 'subtract' ? theme.red : theme.green;
   const inputDisplay = input === '' ? '0' : (mode === 'subtract' ? '-' : '+') + input;
 
+  const balanceText = isOverflow ? '—' : formatBalance(balance, roundBalance);
+  const availableWidth = Math.max(0, blockWidth - BLOCK_HORIZONTAL_PADDING * 2);
+  const fontScale =
+    availableWidth > 0 && naturalTextWidth > availableWidth ? availableWidth / naturalTextWidth : 1;
+  const balanceFontSize = BASE_BALANCE_FONT_SIZE * fontScale;
+
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <View style={styles.counterBlock}>
+      <View style={styles.counterBlock} onLayout={handleBlockLayout}>
+        {/* Invisible twin of the balance+currency text, rendered at the base font size, purely
+            to measure how wide it *would* be — that width drives the shrink-to-fit scale below
+            (RN's adjustsFontSizeToFit can't span two separately-pressable Text elements). */}
+        <Text
+          style={[styles.balance, styles.measure, { fontSize: BASE_BALANCE_FONT_SIZE }]}
+          onLayout={(e) => setNaturalTextWidth(e.nativeEvent.layout.width)}
+          numberOfLines={1}
+          pointerEvents="none"
+        >
+          {balanceText} {currencySymbol}
+        </Text>
         <View style={styles.balanceRow}>
           <AnimatedPressable
             onLongPress={() => setManualModalVisible(true)}
@@ -78,18 +118,20 @@ export function CounterScreen() {
             scaleOnPress
             style={styles.balancePressable}
           >
-            <Text style={[styles.balance, { color: theme.text }]}>
-              {formatBalance(balance, roundBalance)}
+            <Text style={[styles.balance, { color: theme.text, fontSize: balanceFontSize }]}>
+              {balanceText}
             </Text>
           </AnimatedPressable>
-          <Text style={[styles.balance, { color: theme.text }]}> </Text>
+          <Text style={[styles.balance, { color: theme.text, fontSize: balanceFontSize }]}> </Text>
           <AnimatedPressable
             onLongPress={() => setCurrencyModalVisible(true)}
             bg="transparent"
             scaleOnPress
             style={styles.balancePressable}
           >
-            <Text style={[styles.balance, { color: theme.text }]}>{currencySymbol}</Text>
+            <Text style={[styles.balance, { color: theme.text, fontSize: balanceFontSize }]}>
+              {currencySymbol}
+            </Text>
           </AnimatedPressable>
         </View>
         <Text style={[styles.inputPreview, { color: inputColor }]}>{inputDisplay}</Text>
@@ -127,6 +169,11 @@ export function CounterScreen() {
         }}
       />
       <CurrencyInputModal visible={currencyModalVisible} onClose={() => setCurrencyModalVisible(false)} />
+      <MessageModal
+        visible={overflowMessage !== null}
+        message={overflowMessage ?? ''}
+        onClose={() => setOverflowMessage(null)}
+      />
     </View>
   );
 }
@@ -154,6 +201,16 @@ const styles = StyleSheet.create({
     fontSize: 44,
     fontWeight: '800',
     letterSpacing: -0.5,
+  },
+  measure: {
+    position: 'absolute',
+    opacity: 0,
+    // An absolutely-positioned node with no left/right pair still gets its parent's width
+    // used as an AT_MOST measurement constraint on some Yoga/Android builds, which silently
+    // wraps this "unbounded" probe text and reports a too-small width (so the shrink logic
+    // never kicks in). A generous explicit maxWidth overrides that constraint so this always
+    // measures the text's true single-line width.
+    maxWidth: 4000,
   },
   inputPreview: {
     fontSize: 22,

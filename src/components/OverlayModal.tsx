@@ -65,7 +65,11 @@ function OverlayModalContent({
           ]}
         >
           {position === 'bottom' ? (
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.bottomContent}>
+            <ScrollView
+              style={styles.scrollBound}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.bottomContent}
+            >
               {children}
             </ScrollView>
           ) : (
@@ -94,6 +98,13 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: 14,
+  },
+  scrollBound: {
+    // Without flexShrink:1, this ScrollView sizes purely to its content and never actually
+    // becomes bounded/scrollable — the card's maxHeight then can't clip it, so overflow just
+    // spills past the screen's bottom edge instead of scrolling (this is what made the last
+    // button look cropped even after the maxHeight/padding increases).
+    flexShrink: 1,
   },
   bottomContent: {
     gap: 14,
