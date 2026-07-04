@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @keyframes spinFlip { 0% { transform: rotate(0deg); } 100% { transform: rotate(180deg); } }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; }
+  ::placeholder { color: #B0BA99; }
+</style>
+</helmet>
+
+<div style="width:393px;height:852px;margin:24px auto;background:#F7F1DE;font-family:'Nunito',sans-serif;color:#4E220F;overflow:hidden;position:relative;display:flex;flex-direction:column;border-radius:36px;">
+
+  <!-- Header -->
+  <div style="flex:none;display:flex;align-items:center;justify-content:center;position:relative;padding:22px 20px 14px;">
+    <div style="display:flex;background:#FBF7EA;border-radius:999px;padding:4px;gap:2px;">
+      <div onClick="{{ goCounter }}" style="cursor:pointer;padding:8px 20px;border-radius:999px;font-size:14px;font-weight:700;transition:background .25s,color .25s;background:{{ counterTabBg }};color:{{ counterTabColor }};">Счётчик</div>
+      <div onClick="{{ goHistory }}" style="cursor:pointer;padding:8px 20px;border-radius:999px;font-size:14px;font-weight:700;transition:background .25s,color .25s;background:{{ historyTabBg }};color:{{ historyTabColor }};">История</div>
+    </div>
+    <div onClick="{{ noop }}" style="position:absolute;right:20px;top:22px;width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="3" stroke="#4E220F" stroke-width="1.8"/>
+        <path d="M19.4 13a7.9 7.9 0 000-2l2-1.5-2-3.4-2.4.6a8 8 0 00-1.7-1L15 3h-4l-.3 2.7a8 8 0 00-1.7 1l-2.4-.6-2 3.4L6.6 11a7.9 7.9 0 000 2l-2 1.5 2 3.4 2.4-.6a8 8 0 001.7 1L11 21h4l.3-2.7a8 8 0 001.7-1l2.4.6 2-3.4-2-1.5z" stroke="#4E220F" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Counter screen -->
+  <sc-if value="{{ isCounterScreen }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-height:0;">
+
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 20px 22px;gap:6px;">
+        <div style="font-size:44px;font-weight:800;letter-spacing:-0.5px;color:#4E220F;">{{ balanceDisplay }}</div>
+        <div style="font-size:22px;font-weight:700;min-height:28px;color:{{ inputColor }};">{{ inputDisplay }}</div>
+      </div>
+
+      <div style="flex:none;padding:0 20px 14px;">
+        <input value="{{ txnNameInput }}" onChange="{{ onTxnNameChange }}" placeholder="Название операции (необязательно)" style="width:100%;border:none;background:#FBF7EA;border-radius:16px;padding:14px 16px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:600;color:#4E220F;outline:none;"/>
+      </div>
+
+      <div style="flex:none;height:50%;max-height:50%;padding:0 20px 26px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:12px;min-height:0;">
+
+        <div onClick="{{ pressDigit7 }}" style="grid-column:1;grid-row:1;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">7</div>
+        <div onClick="{{ pressDigit8 }}" style="grid-column:2;grid-row:1;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">8</div>
+        <div onClick="{{ pressDigit9 }}" style="grid-column:3;grid-row:1;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">9</div>
+
+        <div onClick="{{ toggleMode }}" style="grid-column:4;grid-row:1;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;">
+          <div style="width:22px;height:22px;position:relative;transform:{{ modeIconTransform }};transition:transform .45s ease;">
+            <div style="position:absolute;left:3px;bottom:5px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:11px solid {{ modeColor }};transition:border-top-color .45s ease;"></div>
+          </div>
+        </div>
+
+        <div onClick="{{ pressDigit4 }}" style="grid-column:1;grid-row:2;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">4</div>
+        <div onClick="{{ pressDigit5 }}" style="grid-column:2;grid-row:2;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">5</div>
+        <div onClick="{{ pressDigit6 }}" style="grid-column:3;grid-row:2;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">6</div>
+
+        <div onClick="{{ backspace }}" style="grid-column:4;grid-row:2;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <svg width="22" height="16" viewBox="0 0 24 18" fill="none">
+            <path d="M8 1h14a1 1 0 011 1v14a1 1 0 01-1 1H8L1 9l7-8z" stroke="#4E220F" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M11 6l6 6M17 6l-6 6" stroke="#4E220F" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div onClick="{{ pressDigit1 }}" style="grid-column:1;grid-row:3;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">1</div>
+        <div onClick="{{ pressDigit2 }}" style="grid-column:2;grid-row:3;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">2</div>
+        <div onClick="{{ pressDigit3 }}" style="grid-column:3;grid-row:3;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">3</div>
+
+        <div onClick="{{ commit }}" style="grid-column:4;grid-row:3 / span 2;background:{{ enterBg }};border-radius:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M20 5v6a3 3 0 01-3 3H6" stroke="#F7F1DE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.5 10.5L5 14l4.5 3.5" stroke="#F7F1DE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div onClick="{{ pressDigit0 }}" style="grid-column:1 / span 2;grid-row:4;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">0</div>
+        <div onClick="{{ pressDot }}" style="grid-column:3;grid-row:4;background:#FBF7EA;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;cursor:pointer;">.</div>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- History screen -->
+  <sc-if value="{{ isHistoryScreen }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;flex-direction:column;min-height:0;">
+      <div style="flex:none;display:flex;justify-content:flex-end;padding:2px 20px 14px;">
+        <div onClick="{{ openFilter }}" style="display:flex;align-items:center;gap:8px;background:#FBF7EA;padding:9px 16px;border-radius:999px;cursor:pointer;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M3 4h18l-7 8v6l-4 2v-8L3 4z" stroke="#4E220F" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+          <span style="font-size:13px;font-weight:700;">Фильтр и сортировка</span>
+        </div>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;padding:0 20px 24px;">
+        <sc-for list="{{ groupedTransactions }}" as="group" hint-placeholder-count="3">
+          <div style="margin-bottom:18px;">
+            <div style="font-size:12px;font-weight:700;color:#B0BA99;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">{{ group.label }}</div>
+            <sc-for list="{{ group.items }}" as="txn" hint-placeholder-count="3">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(78,34,15,0.1);gap:12px;">
+                <sc-if value="{{ txn.hasName }}" hint-placeholder-val="{{ true }}">
+                  <div style="min-width:0;">
+                    <div style="font-size:15px;font-weight:700;color:#4E220F;">{{ txn.displayName }}</div>
+                    <div style="font-size:12px;font-weight:400;color:#B0BA99;margin-top:2px;">{{ txn.dateTime }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ txn.noName }}" hint-placeholder-val="{{ false }}">
+                  <div style="min-width:0;display:flex;flex-direction:column;gap:6px;">
+                    <div style="font-size:12px;font-weight:400;color:#B0BA99;">{{ txn.dateTime }}</div>
+                    <div onClick="{{ txn.startNaming }}" style="width:26px;height:26px;border-radius:8px;border:1.5px solid #B0BA99;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                      <span style="color:#B0BA99;font-size:15px;font-weight:700;line-height:1;">+</span>
+                    </div>
+                  </div>
+                </sc-if>
+                <div style="font-size:16px;font-weight:800;color:{{ txn.amountColor }};white-space:nowrap;flex:none;">{{ txn.amountDisplay }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:40px 0;color:#B0BA99;font-size:14px;font-weight:600;">Нет операций по заданным критериям</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Naming inline overlay -->
+  <sc-if value="{{ showNaming }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ cancelNaming }}" style="position:absolute;inset:0;background:rgba(78,34,15,0.35);display:flex;align-items:center;justify-content:center;padding:40px;">
+      <div onClick="{{ stopProp }}" style="background:#F7F1DE;border-radius:20px;padding:22px;width:100%;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:15px;font-weight:700;">Название операции</div>
+        <input value="{{ namingValue }}" onChange="{{ onNamingChange }}" placeholder="Например, Кофе" autoFocus="{{ true }}" style="border:none;background:#FBF7EA;border-radius:14px;padding:12px 14px;font-size:15px;font-family:'Nunito',sans-serif;color:#4E220F;outline:none;"/>
+        <div style="display:flex;gap:10px;">
+          <div onClick="{{ cancelNaming }}" style="flex:1;text-align:center;padding:12px;border-radius:14px;background:#FBF7EA;color:#B0BA99;font-weight:700;font-size:14px;cursor:pointer;">Отмена</div>
+          <div onClick="{{ saveNaming }}" style="flex:1;text-align:center;padding:12px;border-radius:14px;background:#6B8F5C;color:#F7F1DE;font-weight:700;font-size:14px;cursor:pointer;">Сохранить</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Filter modal -->
+  <sc-if value="{{ showFilter }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeFilter }}" style="position:absolute;inset:0;background:rgba(78,34,15,0.35);display:flex;flex-direction:column;justify-content:flex-end;">
+      <div onClick="{{ stopProp }}" style="background:#F7F1DE;border-radius:24px 24px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:20px;max-height:80%;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:17px;font-weight:800;">Фильтр и сортировка</div>
+          <div onClick="{{ closeFilter }}" style="width:30px;height:30px;border-radius:10px;background:#FBF7EA;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#B0BA99;font-weight:700;">×</div>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#B0BA99;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Тип записи</div>
+          <sc-for list="{{ filterTypeOptions }}" as="opt" hint-placeholder-count="4">
+            <div onClick="{{ opt.select }}" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;cursor:pointer;">
+              <span style="font-size:15px;font-weight:600;color:#4E220F;">{{ opt.label }}</span>
+              <div style="width:20px;height:20px;border-radius:999px;border:1.6px solid {{ opt.dotBorder }};display:flex;align-items:center;justify-content:center;">
+                <sc-if value="{{ opt.active }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:10px;height:10px;border-radius:999px;background:#6B8F5C;"></div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#B0BA99;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Дата записи</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:#FBF7EA;border-radius:14px;padding:12px 14px;">
+              <span style="font-size:14px;font-weight:600;color:#B0BA99;">Начало периода</span>
+              <input type="date" value="{{ filterStart }}" onChange="{{ onFilterStartChange }}" style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14px;color:#4E220F;font-weight:700;outline:none;"/>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:#FBF7EA;border-radius:14px;padding:12px 14px;">
+              <span style="font-size:14px;font-weight:600;color:#B0BA99;">Конец периода</span>
+              <input type="date" value="{{ filterEnd }}" onChange="{{ onFilterEndChange }}" style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14px;color:#4E220F;font-weight:700;outline:none;"/>
+            </div>
+          </div>
+        </div>
+
+        <div onClick="{{ closeFilter }}" style="text-align:center;padding:15px;border-radius:16px;background:#6B8F5C;color:#F7F1DE;font-weight:800;font-size:15px;cursor:pointer;">Применить</div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function fmtAmount(n) {
+  var neg = n < 0;
+  var abs = Math.abs(n);
+  var s = abs.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+  return (neg ? '-' : '') + s + ' ₽';
+}
+function fmtBalance(n) {
+  return Math.round(n).toLocaleString('ru-RU') + ' ₽';
+}
+
+class Component extends DCLogic {
+  state = {
+    screen: 'counter',
+    mode: 'subtract',
+    input: '',
+    modeAnim: false,
+    balance: 24380,
+    transactions: [
+      { id: 1, date: '2026-07-03', time: '18:42', name: 'Кофе', amount: -320, type: 'expense' },
+      { id: 2, date: '2026-07-03', time: '13:10', name: null, amount: -1450, type: 'expense' },
+      { id: 3, date: '2026-07-03', time: '09:00', name: null, amount: 30000, type: 'balance_change' },
+      { id: 4, date: '2026-07-02', time: '21:05', name: 'Зарплата', amount: 65000, type: 'income' },
+      { id: 5, date: '2026-07-02', time: '15:30', name: 'Продукты', amount: -2870, type: 'expense' },
+      { id: 6, date: '2026-07-02', time: '12:00', name: null, amount: -540, type: 'expense' },
+      { id: 7, date: '2026-06-30', time: '19:15', name: 'Такси', amount: -410, type: 'expense' },
+      { id: 8, date: '2026-06-29', time: '10:20', name: null, amount: 5000, type: 'income' }
+    ],
+    showFilter: false,
+    filterType: 'all',
+    filterStart: '',
+    filterEnd: '',
+    namingId: null,
+    namingValue: '',
+    txnNameInput: ''
+  };
+
+  goCounter = () => this.setState({ screen: 'counter' });
+  goHistory = () => this.setState({ screen: 'history' });
+  noop = () => {};
+  stopProp = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+
+  appendDigit(d) {
+    this.setState((s) => {
+      if (s.input.length >= 9) return null;
+      if (s.input === '0' && d !== '.') return { input: d };
+      return { input: s.input + d };
+    });
+  }
+  pressDigit0 = () => this.appendDigit('0');
+  pressDigit1 = () => this.appendDigit('1');
+  pressDigit2 = () => this.appendDigit('2');
+  pressDigit3 = () => this.appendDigit('3');
+  pressDigit4 = () => this.appendDigit('4');
+  pressDigit5 = () => this.appendDigit('5');
+  pressDigit6 = () => this.appendDigit('6');
+  pressDigit7 = () => this.appendDigit('7');
+  pressDigit8 = () => this.appendDigit('8');
+  pressDigit9 = () => this.appendDigit('9');
+  pressDot = () => {
+    this.setState((s) => {
+      if (s.input.indexOf('.') !== -1) return null;
+      return { input: (s.input === '' ? '0' : s.input) + '.' };
+    });
+  };
+  backspace = () => {
+    this.setState((s) => ({ input: s.input.slice(0, -1) }));
+  };
+
+  toggleMode = () => {
+    this.setState((s) => ({ mode: s.mode === 'subtract' ? 'add' : 'subtract', modeAnim: !s.modeAnim }));
+  };
+
+  commit = () => {
+    const val = parseFloat(this.state.input);
+    if (!val || isNaN(val)) return;
+    const amount = this.state.mode === 'subtract' ? -val : val;
+    const now = new Date();
+    const name = this.state.txnNameInput.trim() || null;
+    const txn = {
+      id: Date.now(),
+      date: now.toISOString().slice(0, 10),
+      time: pad(now.getHours()) + ':' + pad(now.getMinutes()),
+      name: name,
+      amount: amount,
+      type: this.state.mode === 'subtract' ? 'expense' : 'income'
+    };
+    this.setState((s) => ({
+      balance: s.balance + amount,
+      transactions: [txn, ...s.transactions],
+      input: '',
+      txnNameInput: ''
+    }));
+  };
+
+  onTxnNameChange = (e) => this.setState({ txnNameInput: e.target.value });
+
+  openFilter = () => this.setState({ showFilter: true });
+  closeFilter = () => this.setState({ showFilter: false });
+  selectFilterType = (t) => this.setState({ filterType: t });
+  onFilterStartChange = (e) => this.setState({ filterStart: e.target.value });
+  onFilterEndChange = (e) => this.setState({ filterEnd: e.target.value });
+
+  startNaming = (id) => this.setState({ namingId: id, namingValue: '' });
+  cancelNaming = () => this.setState({ namingId: null, namingValue: '' });
+  onNamingChange = (e) => this.setState({ namingValue: e.target.value });
+  saveNaming = () => {
+    const id = this.state.namingId;
+    const name = this.state.namingValue.trim();
+    if (!name) { this.setState({ namingId: null }); return; }
+    this.setState((s) => ({
+      transactions: s.transactions.map((t) => (t.id === id ? { ...t, name: name } : t)),
+      namingId: null,
+      namingValue: ''
+    }));
+  };
+
+  renderVals() {
+    const s = this.state;
+    const accent = '#B0BA99';
+    const green = '#6B8F5C';
+    const red = '#B5533C';
+    const main = '#4E220F';
+
+    const isCounter = s.screen === 'counter';
+    const isHistory = s.screen === 'history';
+
+    const inputColor = s.input === '' ? accent : (s.mode === 'subtract' ? red : green);
+    const inputDisplay = s.input === '' ? '0' : (s.mode === 'subtract' ? '-' : '+') + s.input;
+
+    const modeIconTransform = s.modeAnim ? 'rotate(180deg)' : 'rotate(0deg)';
+    const modeColor = s.mode === 'subtract' ? red : green;
+
+    const enterBg = s.input === '' ? '#FBF7EA' : (s.mode === 'subtract' ? red : green);
+
+    // filter + sort transactions
+    let list = s.transactions.slice().sort((a, b) => {
+      const da = a.date + ' ' + a.time;
+      const db = b.date + ' ' + b.time;
+      return da < db ? 1 : -1;
+    });
+    if (s.filterType !== 'all') {
+      list = list.filter((t) => t.type === s.filterType);
+    }
+    if (s.filterStart) list = list.filter((t) => t.date >= s.filterStart);
+    if (s.filterEnd) list = list.filter((t) => t.date <= s.filterEnd);
+
+    const today = '2026-07-03';
+    const yesterday = '2026-07-02';
+    function dateLabel(d) {
+      if (d === today) return 'Сегодня';
+      if (d === yesterday) return 'Вчера';
+      const parts = d.split('-');
+      return parts[2] + '.' + parts[1] + '.' + parts[0];
+    }
+
+    const groups = [];
+    const byDate = {};
+    list.forEach((t) => {
+      if (!byDate[t.date]) {
+        byDate[t.date] = { label: dateLabel(t.date), items: [] };
+        groups.push(byDate[t.date]);
+      }
+      const hasName = !!t.name || t.type === 'balance_change';
+      const displayName = t.type === 'balance_change' ? 'Изменение баланса' : t.name;
+      const amountColor = t.type === 'balance_change' ? main : (t.amount < 0 ? red : green);
+      byDate[t.date].items.push({
+        id: t.id,
+        hasName: hasName,
+        noName: !hasName,
+        displayName: displayName,
+        dateTime: dateLabel(t.date) + ', ' + t.time,
+        amountDisplay: fmtAmount(t.amount),
+        amountColor: amountColor,
+        startNaming: () => this.startNaming(t.id)
+      });
+    });
+
+    const filterTypeOptions = [
+      { key: 'all', label: 'Все' },
+      { key: 'income', label: 'Доход' },
+      { key: 'expense', label: 'Расход' },
+      { key: 'balance_change', label: 'Изменение баланса' }
+    ].map((o) => ({
+      label: o.label,
+      active: s.filterType === o.key,
+      dotBorder: s.filterType === o.key ? green : accent,
+      select: () => this.selectFilterType(o.key)
+    }));
+
+    return {
+      isCounterScreen: isCounter,
+      isHistoryScreen: isHistory,
+      counterTabBg: isCounter ? accent : 'transparent',
+      counterTabColor: isCounter ? main : accent,
+      historyTabBg: isHistory ? accent : 'transparent',
+      historyTabColor: isHistory ? main : accent,
+      goCounter: this.goCounter,
+      goHistory: this.goHistory,
+      noop: this.noop,
+      stopProp: this.stopProp,
+
+      balanceDisplay: fmtBalance(s.balance),
+      inputDisplay: inputDisplay,
+      inputColor: inputColor,
+
+      modeIconTransform: modeIconTransform,
+      modeColor: modeColor,
+      toggleMode: this.toggleMode,
+      enterBg: enterBg,
+
+      pressDigit0: this.pressDigit0,
+      pressDigit1: this.pressDigit1,
+      pressDigit2: this.pressDigit2,
+      pressDigit3: this.pressDigit3,
+      pressDigit4: this.pressDigit4,
+      pressDigit5: this.pressDigit5,
+      pressDigit6: this.pressDigit6,
+      pressDigit7: this.pressDigit7,
+      pressDigit8: this.pressDigit8,
+      pressDigit9: this.pressDigit9,
+      pressDot: this.pressDot,
+      backspace: this.backspace,
+      commit: this.commit,
+      txnNameInput: s.txnNameInput,
+      onTxnNameChange: this.onTxnNameChange,
+
+      groupedTransactions: groups,
+      noResults: groups.length === 0,
+
+      openFilter: this.openFilter,
+      closeFilter: this.closeFilter,
+      showFilter: s.showFilter,
+      filterTypeOptions: filterTypeOptions,
+      filterStart: s.filterStart,
+      filterEnd: s.filterEnd,
+      onFilterStartChange: this.onFilterStartChange,
+      onFilterEndChange: this.onFilterEndChange,
+
+      showNaming: s.namingId !== null,
+      namingValue: s.namingValue,
+      onNamingChange: this.onNamingChange,
+      cancelNaming: this.cancelNaming,
+      saveNaming: this.saveNaming
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"/Users/wisp/Claude/Claude Code\" -maxdepth 3 2>/dev/null)",
+      "Read(//Users/wisp/Claude/Claude Code/**)",
+      "Bash(npm -v)",
+      "Bash(npx --yes create-expo-app@latest . --template blank-typescript)",
+      "Bash(npx --yes create-expo-app@latest --help)",
+      "Bash(rm -rf /tmp/expense-counter-scaffold)",
+      "Bash(npx --yes create-expo-app@latest /tmp/expense-counter-scaffold --template blank-typescript --no-agents-md)",
+      "Bash(cp -a /tmp/expense-counter-scaffold/. .)",
+      "Bash(npx --yes expo install expo-sqlite @react-native-async-storage/async-storage)",
+      "Bash(npx --yes expo install react-native-svg)",
+      "Bash(npx --yes expo install @react-native-community/datetimepicker)",
+      "Bash(npx --yes expo install react-native-safe-area-context)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npx expo *)",
+      "Bash(lsof -iTCP:8081 -sTCP:LISTEN -n -P)",
+      "Bash(curl -s http://localhost:8081/status)",
+      "Bash(curl -s http://localhost:8081 -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(ipconfig getifaddr *)"
+    ]
+  }
+}
